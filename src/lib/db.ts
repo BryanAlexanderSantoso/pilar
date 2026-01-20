@@ -99,6 +99,19 @@ export async function initDb() {
   }
 }
 
+export interface Experience {
+  id: string;
+  company: string;
+  role: string;
+  period: string;
+  location: string;
+  slug: string;
+  description: string;
+  tasks: string[];
+  logo: string;
+  created_at: Date;
+}
+
 export async function getFullDb() {
   await initDb();
   const experiences = await sql`SELECT * FROM experiences ORDER BY created_at DESC`;
@@ -107,10 +120,18 @@ export async function getFullDb() {
   const skills = await sql`SELECT * FROM skills ORDER BY created_at DESC`;
 
   return {
-    experiences: experiences.map(exp => ({
-      ...exp,
+    experiences: (experiences as any[]).map(exp => ({
+      id: exp.id,
+      company: exp.company,
+      role: exp.role,
+      period: exp.period,
+      location: exp.location,
+      slug: exp.slug,
+      description: exp.description,
+      logo: exp.logo,
+      created_at: exp.created_at,
       tasks: typeof exp.tasks === 'string' ? JSON.parse(exp.tasks) : (exp.tasks || [])
-    })),
+    })) as Experience[],
     projects,
     education,
     skills: skills.map(s => s.name)

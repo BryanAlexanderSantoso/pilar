@@ -1,12 +1,12 @@
-import { getFullDb } from "@/lib/db";
+import { Experience, getFullDb } from "@/lib/db";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, MapPin, Calendar, Building2, CheckCircle2 } from "lucide-react";
 
-export default async function ExperienceDetail({ params }: { params: { slug: string } }) {
-    const { slug } = params;
+export default async function ExperienceDetail({ params }: { params: Promise<{ slug: string }> }) {
+    const { slug } = await params;
     const db = await getFullDb();
-    const experience = db.experiences.find((e: any) => e.slug === slug);
+    const experience = db.experiences.find((e: Experience) => e.slug === slug);
 
     if (!experience) {
         notFound();
